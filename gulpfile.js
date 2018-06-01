@@ -35,6 +35,12 @@ var path = {
 
 
 
+function swallowError (error) {
+  //Stop gulp from stoping when the scss is wrong + can't compile
+  console.log(error.toString())
+  this.emit('end')
+}
+
 // compile SCSS
 gulp.task( 'sass', function() {
   gulp.src( path.sass ) // Where we get the sass files from
@@ -43,8 +49,11 @@ gulp.task( 'sass', function() {
       sourceComments: 'normal',
       errLogToConsole: true
     })) //pipe this through gulp-sass to convert it
+    .on('error', swallowError)
     .pipe( autoprefixer() )
+    .on('error', swallowError)
     .pipe( gulp.dest( path.distCss ) ) //Send the results here
+    .on('error', swallowError)
     .pipe(browserSync.reload({ stream: true }));
 });
 
